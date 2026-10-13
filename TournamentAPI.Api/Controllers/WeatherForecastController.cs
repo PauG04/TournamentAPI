@@ -12,14 +12,19 @@ public class WeatherForecastController : ControllerBase
     ];
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public ActionResult<IEnumerable<WeatherForecast>> Get(int days = 5)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        if (days < 1 || days > 30)
+        {
+            return BadRequest("The number of days must be between 1 and 30");
+        }
+
+        return Ok(Enumerable.Range(1, days).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
             TemperatureC = Random.Shared.Next(-20, 55),
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         })
-        .ToArray();
+        .ToArray());
     }
 }
